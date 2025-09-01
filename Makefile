@@ -3,7 +3,7 @@ CFLAGS = -Iinclude
 SRC_DIR = zebra/
 BUILD = build/
 TARGET = $(BUILD)zebra
-SRC = $(SRC_DIR)main.c
+SRC = $(SRC_DIR)*
 
 all: $(TARGET)
 

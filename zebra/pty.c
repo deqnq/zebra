@@ -1,6 +1,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
+#include <stdio.h>
 #include <unistd.h>
 #include "pty.h"
 
@@ -15,7 +16,7 @@ int get_master(Pty *pty){
 }
 
 int get_slave(Pty *pty){
-    int unlock;
+    int unlock = 0;
     int unlocked = ioctl(pty->master, TIOCSPTLCK, &unlock);
     if (unlocked < 0){
         perror("error: failed to unlock slave.");
@@ -33,14 +34,15 @@ int get_slave(Pty *pty){
     snprintf(path, sizeof path, "/dev/pts/%d", slave_index);
     int fd = open(path, O_RDWR|O_NOCTTY);
 	if (fd < 0){
-        perror("error: failed to open slave.");
+        perror("error: failed to open slave");
         return 1;
     }
 
+    pty->slave = fd;
     return 0;
 }
 
-void cleanup(Pty *pty){
+void clean_pty(Pty *pty){
     close(pty->master);
     close(pty->slave);
 }

@@ -7,5 +7,5 @@ typedef struct {
 
 int get_master(Pty *pty);
 int get_slave(Pty *pty);
-void cleanup(Pty *pty);
+void clean_pty(Pty *pty);
 #endif
