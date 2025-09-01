@@ -16,6 +16,11 @@ int get_master(Pty *pty){
 }
 
 int get_slave(Pty *pty){
+    if (!pty->master) {
+        perror("error: the master not initialized");
+        return 1;
+    }
+
     int unlock = 0;
     int unlocked = ioctl(pty->master, TIOCSPTLCK, &unlock);
     if (unlocked < 0){
@@ -43,6 +48,10 @@ int get_slave(Pty *pty){
 }
 
 void clean_pty(Pty *pty){
-    close(pty->master);
-    close(pty->slave);
+    if (pty->master){
+        close(pty->master);
+    }
+    if (pty->slave){
+        close(pty->slave);
+    }
 }
