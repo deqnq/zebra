@@ -2,9 +2,11 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include "pty.h"
+#include "debug.h"
 
 int runParent(Pty *pty){
     close(pty->slave);
+    sleep(5);
     return 0;
 }
 
@@ -13,18 +15,17 @@ int runChild(Pty *pty){
     // with setsid()
     // the process is the leader of the new session
     // we can use ioctl() with TIOCSCTTY
-    int new_session = setsid();
-    if (new_session < 0) {
+    if (!setsid()) {
         perror("setsid");
         return 1;
     }
-
     // pty->slave becomes the control terminal of the process
-    printf("pty->slave: %d\n", pty->slave);
-    if (ioctl(pty->slave, TIOCSCTTY, 0) < 0){
+    int set = ioctl(pty->slave, TIOCSCTTY, 0);
+    if (set < 0){
         perror("ioctl");
         return 1;
     }
+    listdev();
     // redirection
     dup2(pty->slave, 0);
     dup2(pty->slave, 1);
@@ -39,6 +40,7 @@ int main (){
     if (err) return 1;
     err = get_slave(&pty);
     if (err) return 1;
+    listdev();
 
     // with fork()
     // the child process is not the pgroup leader
