@@ -1,8 +1,7 @@
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/ioctl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
 #include "pty.h"
 
 int get_master(Pty *pty){
@@ -39,7 +38,7 @@ int get_slave(Pty *pty){
     snprintf(path, sizeof path, "/dev/pts/%d", slave_index);
     int fd = open(path, O_RDWR|O_NOCTTY);
 	if (fd < 0){
-        perror("error: failed to open slave");
+        perror("open");
         return 1;
     }
 
